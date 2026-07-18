@@ -1,0 +1,15 @@
+# environment
+.venv/
+.env
+
+# python
+__pycache__/
+*.pyc
+
+# testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# tooling
+.mypy_cache/
