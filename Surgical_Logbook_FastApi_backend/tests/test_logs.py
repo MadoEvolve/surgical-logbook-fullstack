@@ -5,11 +5,16 @@ def test_create_log(create_log):
     assert response.status_code == 201
 
 #read all logs
-def test_read_all_logs_only_admin(client,admin_token_headers):
-    response = client.get("/logs/",headers=admin_token_headers)
+def test_read_all_logs_only_admin(client, admin_token_headers):
+    response = client.get("/logs/", headers=admin_token_headers)
+
     assert response.status_code == 200
     data = response.json()["data"]
-    assert isinstance(data, list)
+
+    assert "result" in data
+    assert "total" in data
+    assert isinstance(data["result"], list)
+    assert isinstance(data["total"], int)
 
 def test_read_all_logs_user(client,user_token_headers):
     response = client.get("/logs/",headers=user_token_headers)

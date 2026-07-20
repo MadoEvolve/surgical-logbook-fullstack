@@ -38,7 +38,7 @@ async def read_my_logs(session: SessionDep,current_user: User = Depends(get_curr
     procedure_id: Optional[int] = None,hospital_id: Optional[int] = None,limit: int = 10,offset: int = 0):
     
     query = select(Log).where(Log.user_id == current_user.id)
-
+    
     if procedure_id:
         query = query.where(Log.procedure_id == procedure_id)
 
@@ -58,11 +58,18 @@ async def read_my_logs(session: SessionDep,current_user: User = Depends(get_curr
 # amended to search logs rather than read all logs
 @router.get("/",response_model=ApiResponse[PaginatedLogs])
 async def search_logs(session: SessionDep, current_user:User = Depends(get_current_admin),
+    specialty: Optional[str] = None, location: Optional[str] = None,
     procedure_id: Optional [int]=None, hospital_id: Optional [int]=None,
     user_id: Optional[int]=None, start_date: Optional[date]=None,
     end_date:Optional[date]=None,limit: int=100, offset: int=0):
     
     query = select(Log).order_by(Log.log_clock.desc())
+
+    if specialty:
+        query = (query.join(Procedure).where(Procedure.specialty == specialty))
+
+    if location:
+        query = (query.join(Hospital).where(Hospital.location == location))
     if user_id:
         query =  query.where(Log.user_id == user_id)
     if procedure_id:

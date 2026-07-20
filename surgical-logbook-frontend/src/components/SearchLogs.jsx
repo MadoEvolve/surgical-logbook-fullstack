@@ -68,11 +68,21 @@ export default function SearchLogs(){
         setError("")
         // grab search criteria if inserted
         const params = new URLSearchParams()
-        if (userId) params.append("user_id", userId)
-        if (procedureId) params.append("procedure_id", procedureId)
-        if (hospitalId) params.append("hospital_id", hospitalId)
-        if (fromDate) params.append("start_date", fromDate)
-        if (toDate) params.append("end_date", toDate)
+        if (userId != null && userId !== "") {params.append("user_id", userId)}
+        if (procedureId != null && procedureId !== "") {
+            params.append("procedure_id", procedureId)
+        } else if (specialty) {
+            params.append("specialty", specialty)
+        }
+
+        if (hospitalId != null && hospitalId !== "") {
+            params.append("hospital_id", hospitalId)
+        } else if (location) {
+            params.append("location", location)
+        }
+
+        if (fromDate !== "") params.append("start_date", fromDate)
+        if (toDate !== "") params.append("end_date", toDate)
 
         // fetch search results
         const token = localStorage.getItem("token")
@@ -84,6 +94,8 @@ export default function SearchLogs(){
                 "Authorization": `Bearer ${token}`
             }
         })
+
+        
         if (response.ok){
             const data = await response.json()
             setSearchResults(data.data.result)
